@@ -175,7 +175,7 @@ func compilerContract(solc, source string) (map[string]models.ContractConfig, er
 }
 
 // 调用合约
-func (c *SipcClient) InvokeContract(contractAddressString string, abiData string, nonce uint64, method string, args ...interface{}) (string, error) {
+func (c *EthClient) InvokeContract(contractAddressString string, abiData string, nonce uint64, method string, args ...interface{}) (string, error) {
 	abiValue, err := abi.JSON(bytes.NewReader([]byte(abiData)))
 	if err != nil {
 		return "", err
@@ -222,7 +222,7 @@ func (c *SipcClient) InvokeContract(contractAddressString string, abiData string
 }
 
 // 查询合约
-func (c *SipcClient) QueryContract(contractAddressString string, abiData string, result interface{}, method string, args ...interface{}) error {
+func (c *EthClient) QueryContract(contractAddressString string, abiData string, result interface{}, method string, args ...interface{}) error {
 	abiValue, err := abi.JSON(bytes.NewReader([]byte(abiData)))
 	if err != nil {
 		return err
@@ -244,7 +244,7 @@ func (c *SipcClient) QueryContract(contractAddressString string, abiData string,
 }
 
 // 部署合约
-func (c *SipcClient) DeployContract(contractData string, contractName string) error {
+func (c *EthClient) DeployContract(contractData string, contractName string) error {
 	contractMap, err := compilerContract("", contractData)
 	if err != nil {
 		return err
@@ -282,7 +282,7 @@ func (c *SipcClient) DeployContract(contractData string, contractName string) er
 }
 
 // 判断上链状态
-func (c *SipcClient) JudgeUpChainStatus(txId string, opType string, txResultStatusChan chan models.TxResultStatus, wg *sync.WaitGroup) {
+func (c *EthClient) JudgeUpChainStatus(txId string, opType string, txResultStatusChan chan models.TxResultStatus, wg *sync.WaitGroup) {
 	defer wg.Done()
 	txResultStatus := models.TxResultStatus{}
 	receipt, err := c.internalJudgeUpChainStatus(txId, opType)
@@ -294,7 +294,7 @@ func (c *SipcClient) JudgeUpChainStatus(txId string, opType string, txResultStat
 }
 
 // 判断上链状态
-func (c *SipcClient) internalJudgeUpChainStatus(txId string, opType string) (*types.Receipt, error) {
+func (c *EthClient) internalJudgeUpChainStatus(txId string, opType string) (*types.Receipt, error) {
 	ticker := time.NewTicker(30 * time.Second)
 	meterCount := 0
 	for {

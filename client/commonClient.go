@@ -29,7 +29,7 @@ func ToHexString(q string) (*string, error) {
 }
 
 // Block to MixedBlock
-func BlockToMixedBlock(c *SipcClient, block *models.Block) (*models.MixedBlock, error) {
+func BlockToMixedBlock(c *EthClient, block *models.Block) (*models.MixedBlock, error) {
 	mixedTransactions := make([]models.MixTransaction, 0)
 	for _, tx := range block.Transactions {
 		receipt, err := c.GetTransactionDetail(tx.Hash)
@@ -413,7 +413,7 @@ func HexStringToDecString(hexString string) (*string, error) {
 }
 
 // 获取链上矿工账号
-func (c *SipcClient) GetSigners() ([]string, error) {
+func (c *EthClient) GetSigners() ([]string, error) {
 	var signers []string
 	err := c.ClientPara.RpcClient.Call(&signers, "clique_getSigners")
 	if err != nil {
@@ -424,7 +424,7 @@ func (c *SipcClient) GetSigners() ([]string, error) {
 }
 
 // 获取节点账户地址
-func (c *SipcClient) GetAccounts() ([]string, error) {
+func (c *EthClient) GetAccounts() ([]string, error) {
 	var account []string
 	err := c.ClientPara.RpcClient.Call(&account, "eth_accounts")
 	if err != nil {
@@ -435,7 +435,7 @@ func (c *SipcClient) GetAccounts() ([]string, error) {
 }
 
 // 获取节点信息
-func (c *SipcClient) GetNodeInfo() (*models.NodeInfo, error) {
+func (c *EthClient) GetNodeInfo() (*models.NodeInfo, error) {
 	node := models.NodeInfo{}
 	err := c.ClientPara.RpcClient.Call(&node, "admin_nodeInfo")
 	if err != nil {
@@ -446,7 +446,7 @@ func (c *SipcClient) GetNodeInfo() (*models.NodeInfo, error) {
 }
 
 // 连接peer
-func (c *SipcClient) AddPeer(enode string, from string) (string, error) {
+func (c *EthClient) AddPeer(enode string, from string) (string, error) {
 	var ok interface{}
 	if enode == "" {
 
@@ -468,7 +468,7 @@ func (c *SipcClient) AddPeer(enode string, from string) (string, error) {
 }
 
 // 最新块高
-func (c *SipcClient) BlockNumber() (uint64, error) {
+func (c *EthClient) BlockNumber() (uint64, error) {
 	var n string
 	err := c.ClientPara.RpcClient.Call(&n, "eth_blockNumber")
 	if err != nil {
@@ -485,7 +485,7 @@ func (c *SipcClient) BlockNumber() (uint64, error) {
 }
 
 // 解锁账号
-func (c *SipcClient) UnlockAccount(account string, passwd string, time uint64) (bool, error) {
+func (c *EthClient) UnlockAccount(account string, passwd string, time uint64) (bool, error) {
 	var res interface{}
 	err := c.ClientPara.RpcClient.Call(&res, "personal_unlockAccount", account, passwd, time)
 	if err != nil {
@@ -496,7 +496,7 @@ func (c *SipcClient) UnlockAccount(account string, passwd string, time uint64) (
 }
 
 // 连接的节点数
-func (c *SipcClient) PeerCount() (int64, error) {
+func (c *EthClient) PeerCount() (int64, error) {
 	var res interface{}
 	err := c.ClientPara.RpcClient.Call(&res, "net_peerCount")
 	if err != nil {
@@ -509,7 +509,7 @@ func (c *SipcClient) PeerCount() (int64, error) {
 }
 
 // 连接的节点信息
-func (c *SipcClient) Peers() (interface{}, error) {
+func (c *EthClient) Peers() (interface{}, error) {
 	var res interface{}
 	err := c.ClientPara.RpcClient.Call(&res, "admin_peers")
 	if err != nil {
@@ -520,7 +520,7 @@ func (c *SipcClient) Peers() (interface{}, error) {
 }
 
 // 矿工投票 auth为false 删除矿工 为true 添加矿工 address为矿工账号
-func (c *SipcClient) Propose(address string, auth bool) (interface{}, error) {
+func (c *EthClient) Propose(address string, auth bool) (interface{}, error) {
 	var res interface{}
 	err := c.ClientPara.RpcClient.Call(&res, "clique_propose", common.HexToAddress(address), auth)
 	if err != nil {
@@ -531,7 +531,7 @@ func (c *SipcClient) Propose(address string, auth bool) (interface{}, error) {
 }
 
 // 获取余额
-func (c *SipcClient) GetBalance(addr string, status string) (string, error) {
+func (c *EthClient) GetBalance(addr string, status string) (string, error) {
 	var balance string
 	err := c.ClientPara.RpcClient.Call(&balance, "eth_getBalance", addr, status)
 	if err != nil {
@@ -542,7 +542,7 @@ func (c *SipcClient) GetBalance(addr string, status string) (string, error) {
 }
 
 // 通过交易ID获取交易信息
-func (c *SipcClient) GetTransactionByHash(txId string) (*models.Transaction, error) {
+func (c *EthClient) GetTransactionByHash(txId string) (*models.Transaction, error) {
 	var res interface{}
 	err := c.ClientPara.RpcClient.Call(&res, "eth_getTransactionByHash", txId)
 	if err != nil {
@@ -569,7 +569,7 @@ func (c *SipcClient) GetTransactionByHash(txId string) (*models.Transaction, err
 }
 
 // 通过块hash或者块高获取块
-func (c *SipcClient) GetBlockByBlockNumOrHash(input string) (*models.Block, error) {
+func (c *EthClient) GetBlockByBlockNumOrHash(input string) (*models.Block, error) {
 	var arg string
 	var method string
 	tmp := strings.Split(input, "0x")
@@ -628,7 +628,7 @@ func (c *SipcClient) GetBlockByBlockNumOrHash(input string) (*models.Block, erro
 }
 
 // 通过块hash或者块高获取块（返回块信息结构体信息不一样）
-func (c *SipcClient) GetMixedBlockByBlockNumOrHash(input string) (*models.MixedBlock, error) {
+func (c *EthClient) GetMixedBlockByBlockNumOrHash(input string) (*models.MixedBlock, error) {
 	var arg string
 	var method string
 	tmp := strings.Split(input, "0x")
@@ -688,7 +688,7 @@ func (c *SipcClient) GetMixedBlockByBlockNumOrHash(input string) (*models.MixedB
 }
 
 // 设置矿工账号
-func (c *SipcClient) SetEtherbase(address string) (bool, error) {
+func (c *EthClient) SetEtherbase(address string) (bool, error) {
 	ok := false
 	err := c.ClientPara.RpcClient.Call(&ok, "miner_setEtherbase", address)
 	if err != nil {
@@ -699,7 +699,7 @@ func (c *SipcClient) SetEtherbase(address string) (bool, error) {
 }
 
 // 开启挖矿
-func (c *SipcClient) StartMiner() {
+func (c *EthClient) StartMiner() {
 	a, err := c.GetAccounts()
 	if err != nil {
 
@@ -725,7 +725,7 @@ func (c *SipcClient) StartMiner() {
 }
 
 // 开启挖矿
-func (c *SipcClient) MinerStart() (interface{}, error) {
+func (c *EthClient) MinerStart() (interface{}, error) {
 	var res interface{}
 	err := c.ClientPara.RpcClient.Call(&res, "miner_start")
 	if err != nil {
@@ -736,7 +736,7 @@ func (c *SipcClient) MinerStart() (interface{}, error) {
 }
 
 // 停止挖矿
-func (c *SipcClient) MinerStop() (interface{}, error) {
+func (c *EthClient) MinerStop() (interface{}, error) {
 	var res interface{}
 	err := c.ClientPara.RpcClient.Call(&res, "miner_stop")
 	if err != nil {
@@ -747,7 +747,7 @@ func (c *SipcClient) MinerStop() (interface{}, error) {
 }
 
 // 挖矿状态
-func (c *SipcClient) Mining() (interface{}, error) {
+func (c *EthClient) Mining() (interface{}, error) {
 	var res interface{}
 	err := c.ClientPara.RpcClient.Call(&res, "eth_mining")
 	if err != nil {
@@ -758,7 +758,7 @@ func (c *SipcClient) Mining() (interface{}, error) {
 }
 
 // 获取交易receipt
-func (c *SipcClient) GetTransactionReceipt(txId string) (*types.Receipt, error) {
+func (c *EthClient) GetTransactionReceipt(txId string) (*types.Receipt, error) {
 	var r *types.Receipt
 	err := c.ClientPara.RpcClient.Call(&r, "eth_getTransactionReceipt", common.HexToHash(txId))
 	if err != nil {
@@ -769,7 +769,7 @@ func (c *SipcClient) GetTransactionReceipt(txId string) (*types.Receipt, error) 
 }
 
 // 获取交易receipt
-func (c *SipcClient) GetTransactionDetail(txId string) (*models.Receipt, error) {
+func (c *EthClient) GetTransactionDetail(txId string) (*models.Receipt, error) {
 	var res interface{}
 	err := c.ClientPara.RpcClient.Call(&res, "eth_getTransactionReceipt", common.HexToHash(txId))
 	if err != nil {
@@ -795,7 +795,7 @@ func (c *SipcClient) GetTransactionDetail(txId string) (*models.Receipt, error) 
 }
 
 // 获取共识类型 poa raft pow
-func (c *SipcClient) GetConsensus() (string, error) {
+func (c *EthClient) GetConsensus() (string, error) {
 	var consensus string
 	nodeInfo, err := c.GetNodeInfo()
 	if err != nil {
@@ -816,13 +816,13 @@ func (c *SipcClient) GetConsensus() (string, error) {
 }
 
 // 获取nonce
-func (c *SipcClient) GetNonce() (uint64, error) {
+func (c *EthClient) GetNonce() (uint64, error) {
 	from := crypto.PubkeyToAddress(c.SignPrikey.PublicKey)
 	return c.ClientPara.Client.PendingNonceAt(*c.Ctx, from)
 }
 
 // 调用RPC API
-func (c *SipcClient) CallRpcApi(method string, para ...interface{}) (interface{}, error) {
+func (c *EthClient) CallRpcApi(method string, para ...interface{}) (interface{}, error) {
 	var res interface{}
 	err := c.ClientPara.RpcClient.Call(&res, method, para)
 	if err != nil {

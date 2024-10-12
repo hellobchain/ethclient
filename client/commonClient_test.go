@@ -22,9 +22,9 @@ func TestSignal(t *testing.T) {
 	}
 }
 
-var Client *SipcClient
+var Client *EthClient
 
-func GetClient(tls bool) *SipcClient {
+func GetClient(tls bool) *EthClient {
 	address := "192.168.0.196:8548"
 
 	signTxPara := &models.SignTxPara{

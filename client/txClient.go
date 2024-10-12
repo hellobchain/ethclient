@@ -12,7 +12,7 @@ import (
 )
 
 // 发送交易
-func (c *SipcClient) SendTransaction(opType int, nonce uint64, to string, amount string, data []byte) (*string, error) {
+func (c *EthClient) SendTransaction(opType int, nonce uint64, to string, amount string, data []byte) (*string, error) {
 	var rawTx *types.Transaction
 	amountBigInt, ok := new(big.Int).SetString(amount, 10)
 	if !ok {

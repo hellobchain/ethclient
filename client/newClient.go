@@ -13,7 +13,7 @@ import (
 
 var log = flogging.MustGetLogger("sipcclient.Client")
 
-type SipcClient struct {
+type EthClient struct {
 	// input
 	Address string `json:"address"` // 节点的地址 IP+rpc port
 	// output
@@ -24,13 +24,13 @@ type SipcClient struct {
 }
 
 // new 一个client
-func NewClient(address string, signTxPara *models.SignTxPara) (*SipcClient, error) {
+func NewClient(address string, signTxPara *models.SignTxPara) (*EthClient, error) {
 	key, err := key2.GetKey(signTxPara.SignPrikeyFile, signTxPara.PasswdFile)
 	if err != nil {
 		return nil, err
 	}
 	ctx, cancel := context.WithCancel(context.Background())
-	client := &SipcClient{
+	client := &EthClient{
 		Address:    address,
 		SignPrikey: key.PrivateKey,
 		Ctx:        &ctx,
@@ -44,7 +44,7 @@ func NewClient(address string, signTxPara *models.SignTxPara) (*SipcClient, erro
 }
 
 // client初始化
-func (c *SipcClient) clientInit() error {
+func (c *EthClient) clientInit() error {
 	cli, err := rpc.Dial("http://"+c.Address, "", "", nil)
 	if err != nil {
 		log.Error(err.Error())
@@ -58,7 +58,7 @@ func (c *SipcClient) clientInit() error {
 }
 
 // 关闭client
-func (c *SipcClient) Close() {
+func (c *EthClient) Close() {
 	if c.ClientPara != nil {
 		c.ClientPara.RpcClient.Close()
 	}
